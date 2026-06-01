@@ -4,8 +4,9 @@
       {
         "appIDs": ["T6JSP75FFL.sa.saad.Blip"],
         "components": [
-          { "/": "/podcast*", "comment": "Podcast share links" },
-          { "/": "/episode*", "comment": "Episode share links (future)" }
+          { "/": "/podcast*",  "comment": "Podcast share links" },
+          { "/": "/episode*",  "comment": "Episode share links with optional t= timestamp" },
+          { "/": "/playlist*", "comment": "Playlist share links (up to 5 episodes encoded)" }
         ]
       }
     ]
