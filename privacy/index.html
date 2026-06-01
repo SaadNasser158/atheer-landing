@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Atheer Privacy Policy — we collect nothing." />
+  <meta name="theme-color" content="#11131a" />
+  <link rel="icon" type="image/png" href="../images/icon.png" />
+  <link rel="icon" type="image/png" href="../images/icon.png" media="(prefers-color-scheme: light)" />
+  <link rel="icon" type="image/png" href="../images/icon.png" media="(prefers-color-scheme: dark)" />
+  <link rel="apple-touch-icon" href="../images/icon.png" />
+  <title>Privacy Policy — Atheer</title>
+  <style>
+    :root {
+      --bg: #ececef;
+      --bg-soft: #f7f7f8;
+      --surface: rgba(255,255,255,0.7);
+      --surface-strong: rgba(255,255,255,0.92);
+      --ink: #11131a;
+      --muted: #667085;
+      --muted-strong: #445064;
+      --line: rgba(17,19,26,0.09);
+      --line-strong: rgba(17,19,26,0.16);
+      --warm: #7b6053;
+      --warm-soft: #b68d77;
+      --shadow-soft: 0 24px 60px rgba(17,19,26,0.08);
+      --radius-xl: 36px;
+      --radius-lg: 28px;
+      --radius-md: 20px;
+      --content: 720px;
+      --page-pad: clamp(20px,4vw,56px);
+      --header-h: 80px;
+      --ui-font: "SF Pro Rounded","SF Pro Display","SF Pro Text",ui-rounded,-apple-system,BlinkMacSystemFont,"Helvetica Neue",sans-serif;
+    }
+
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+
+    body {
+      margin: 0;
+      min-width: 320px;
+      background:
+        radial-gradient(circle at top left, rgba(182,141,119,0.16), transparent 24rem),
+        linear-gradient(180deg, #f7f7f8 0%, #ececef 28%, #f3f3f4 100%);
+      color: var(--ink);
+      font-family: var(--ui-font);
+      -webkit-font-smoothing: antialiased;
+      text-rendering: optimizeLegibility;
+      overflow-x: hidden;
+    }
+
+    img { display: block; max-width: 100%; }
+    a { color: inherit; text-decoration: none; }
+
+    /* ── HEADER ── */
+    .site-header {
+      position: fixed;
+      inset: 0 0 auto;
+      z-index: 40;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: var(--header-h);
+      pointer-events: none;
+    }
+    .site-header::before {
+      content: "";
+      position: absolute; inset: 0;
+      background: linear-gradient(180deg, rgba(236,236,239,0.92), rgba(236,236,239,0.68) 58%, rgba(236,236,239,0));
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      mask-image: linear-gradient(180deg, black 55%, transparent);
+      -webkit-mask-image: linear-gradient(180deg, black 55%, transparent);
+    }
+    .site-header-inner {
+      width: min(var(--content), calc(100% - (var(--page-pad) * 2)));
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 20px;
+      pointer-events: auto;
+      position: relative;
+      z-index: 1;
+    }
+    .brand-lockup {
+      display: inline-flex;
+      align-items: center;
+      gap: 12px;
+      font-size: 1rem;
+      font-weight: 600;
+      letter-spacing: -0.02em;
+    }
+    .brand-mark {
+      width: 44px; height: 44px;
+      border-radius: 14px;
+      border: 1px solid rgba(17,19,26,0.08);
+      background: rgba(255,255,255,0.92);
+      box-shadow: 0 12px 30px rgba(17,19,26,0.12);
+      flex-shrink: 0;
+      overflow: hidden;
+    }
+    .brand-mark img {
+      width: 100%; height: 100%;
+      object-fit: cover;
+      transform: scale(1.16);
+      transform-origin: center;
+    }
+    .back-link {
+      font-size: 0.88rem;
+      color: var(--muted);
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      opacity: 0.8;
+      transition: opacity 160ms ease;
+    }
+    .back-link:hover { opacity: 1; }
+
+    /* ── CONTENT ── */
+    .page-shell {
+      padding-top: calc(var(--header-h) + 56px);
+      padding-bottom: 80px;
+      padding-left: var(--page-pad);
+      padding-right: var(--page-pad);
+    }
+    .inner {
+      width: min(var(--content), 100%);
+      margin: 0 auto;
+    }
+
+    .page-eyebrow {
+      font-size: 0.75rem;
+      font-weight: 600;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--warm-soft);
+      margin-bottom: 12px;
+    }
+
+    .page-title {
+      font-size: clamp(2rem, 5vw, 3.2rem);
+      font-weight: 700;
+      letter-spacing: -0.04em;
+      line-height: 1.05;
+      margin-bottom: 12px;
+    }
+
+    .page-meta {
+      font-size: 0.85rem;
+      color: var(--muted);
+      margin-bottom: 52px;
+    }
+
+    /* highlight card */
+    .highlight-card {
+      background: var(--ink);
+      border-radius: var(--radius-lg);
+      padding: 32px 36px;
+      margin-bottom: 40px;
+      box-shadow: 0 36px 90px rgba(17,19,26,0.18);
+    }
+    .highlight-card p {
+      font-size: 1.15rem;
+      font-weight: 600;
+      letter-spacing: -0.02em;
+      color: #fff;
+      line-height: 1.55;
+      margin: 0;
+    }
+    .highlight-card span { color: rgba(255,255,255,0.45); font-weight: 400; }
+
+    /* prose */
+    .prose {
+      background: var(--surface-strong);
+      border: 1px solid var(--line-strong);
+      border-radius: var(--radius-md);
+      padding: 36px 36px;
+      box-shadow: var(--shadow-soft);
+    }
+
+    .prose h2 {
+      font-size: 1rem;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      margin: 0 0 10px;
+      padding-top: 28px;
+      border-top: 1px solid var(--line);
+    }
+    .prose h2:first-child { padding-top: 0; border-top: none; }
+
+    .prose p, .prose ul {
+      font-size: 0.9rem;
+      color: var(--muted);
+      line-height: 1.75;
+      margin: 0 0 16px;
+    }
+    .prose ul { padding-left: 1.2em; }
+    .prose li { margin-bottom: 6px; }
+    .prose a {
+      color: var(--ink);
+      text-decoration: underline;
+      text-underline-offset: 3px;
+      text-decoration-color: var(--line-strong);
+    }
+    .prose a:hover { text-decoration-color: var(--ink); }
+    .prose p:last-child, .prose ul:last-child { margin-bottom: 0; }
+
+    /* ── FOOTER ── */
+    .footer {
+      width: min(var(--content), calc(100% - (var(--page-pad) * 2)));
+      margin: 56px auto 0;
+      padding: 0 0 38px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 24px;
+      flex-wrap: wrap;
+      color: rgba(17,19,26,0.48);
+      font-size: 0.9rem;
+    }
+    .footer-links {
+      display: flex;
+      align-items: center;
+      gap: 22px;
+      flex-wrap: wrap;
+    }
+    .footer-links a { transition: color 160ms ease; }
+    .footer-links a:hover { color: var(--ink); }
+  </style>
+</head>
+<body>
+  <header class="site-header">
+    <div class="site-header-inner">
+      <a class="brand-lockup" href="/">
+        <span class="brand-mark" aria-hidden="true">
+          <img src="../images/icon.png" alt="" />
+        </span>
+        <span>Atheer</span>
+      </a>
+      <a class="back-link" href="/">← Back to home</a>
+    </div>
+  </header>
+
+  <div class="page-shell">
+    <div class="inner">
+      <p class="page-eyebrow">Legal</p>
+      <h1 class="page-title">Privacy Policy</h1>
+      <p class="page-meta">Effective date: January 1, 2025 &nbsp;·&nbsp; Last updated: March 2025</p>
+
+      <div class="highlight-card">
+        <p>Atheer does not collect, store, or share your personal data. <span>Your library, listening history, and preferences never leave your device.</span></p>
+      </div>
+
+      <div class="prose">
+        <h2>Overview</h2>
+        <p>Atheer ("we", "our", or "the app") is a podcast player for iPhone. This policy describes what data we handle and how. The short version: we handle as little as possible, and nothing identifying ever leaves your device.</p>
+
+        <h2>Data we do not collect</h2>
+        <ul>
+          <li>No account or registration is required</li>
+          <li>We do not collect your name, email, or any personally identifiable information</li>
+          <li>We do not track your listening habits or history</li>
+          <li>We do not use advertising SDKs or analytics frameworks</li>
+          <li>We do not share any data with third parties</li>
+        </ul>
+
+        <h2>Data stored on your device</h2>
+        <p>Atheer stores the following locally on your iPhone using SwiftData. This data never leaves your device:</p>
+        <ul>
+          <li>Your podcast subscriptions and library</li>
+          <li>Episode playback progress and history</li>
+          <li>App preferences and settings</li>
+          <li>Cached episode artwork and feed data</li>
+        </ul>
+
+        <h2>Network requests</h2>
+        <p>Atheer makes outbound requests only to fetch podcast RSS feeds and artwork directly from podcast publishers — the same requests any podcast app makes. These requests are made on your behalf and do not pass through our servers.</p>
+        <p>We use the <a href="https://podcastindex.org" target="_blank" rel="noreferrer">Podcast Index API</a> for search and discovery. Please refer to their privacy policy for details on their data handling.</p>
+
+        <h2>Children's privacy</h2>
+        <p>Atheer is not directed at children under 13. We do not knowingly collect information from children.</p>
+
+        <h2>Changes to this policy</h2>
+        <p>We may update this policy from time to time. Changes will be posted on this page with an updated effective date. Continued use of the app after changes constitutes acceptance.</p>
+
+        <h2>Contact</h2>
+        <p>Questions about this policy? Email us at <a href="mailto:Alotaibi.saad158@gmail.com">Alotaibi.saad158@gmail.com</a>.</p>
+      </div>
+    </div>
+  </div>
+
+  <footer class="footer">
+    <div class="brand-lockup">
+      <span class="brand-mark" aria-hidden="true">
+        <img src="../images/icon.png" alt="" />
+      </span>
+      <span>Atheer</span>
+    </div>
+    <div class="footer-links">
+      <a href="/">Home</a>
+      <a href="/support">Support</a>
+      <a href="/privacy">Privacy Policy</a>
+      <a href="/terms">Terms of Use</a>
+    </div>
+    <div>Designed around listening, not noise.</div>
+  </footer>
+</body>
+</html>

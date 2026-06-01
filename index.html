@@ -1,0 +1,1044 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Atheer is a calmer podcast app for iPhone — live transcripts, multilingual discovery, clip export, and fast local-first playback." />
+  <meta name="theme-color" content="#0a0b0f" />
+  <link rel="icon" type="image/png" href="images/icon.png" />
+  <title>Atheer — A calmer way to listen</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg:        #0a0b0f;
+      --surface:   rgba(255,255,255,0.05);
+      --line:      rgba(255,255,255,0.07);
+      --ink:       #ffffff;
+      --muted:     rgba(255,255,255,0.45);
+      --muted2:    rgba(255,255,255,0.28);
+      --font:      "SF Pro Rounded","SF Pro Display",ui-rounded,-apple-system,BlinkMacSystemFont,"Helvetica Neue",sans-serif;
+      --page-pad:  clamp(20px, 5vw, 64px);
+      --max-w:     1160px;
+      --header-h:  72px;
+      --radius:    20px;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--bg);
+      color: var(--ink);
+      font-family: var(--font);
+      -webkit-font-smoothing: antialiased;
+      overflow-x: hidden;
+    }
+
+    a { color: inherit; text-decoration: none; }
+    img { display: block; max-width: 100%; }
+
+    /* ── HEADER ──────────────────────────────── */
+
+    .header {
+      position: fixed;
+      inset: 0 0 auto;
+      z-index: 50;
+      height: var(--header-h);
+      display: flex;
+      align-items: center;
+      border-bottom: 1px solid transparent;
+      transition: border-color 300ms, background 300ms, backdrop-filter 300ms;
+    }
+
+    .header.scrolled {
+      border-color: var(--line);
+      background: rgba(10,11,15,0.72);
+      backdrop-filter: blur(18px);
+      -webkit-backdrop-filter: blur(18px);
+    }
+
+    .header-inner {
+      width: min(var(--max-w), calc(100% - var(--page-pad) * 2));
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 20px;
+    }
+
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 11px;
+      font-size: 1rem;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+    }
+
+    .logo-mark {
+      width: 38px;
+      height: 38px;
+      border-radius: 11px;
+      overflow: hidden;
+      flex-shrink: 0;
+      border: 1px solid rgba(255,255,255,0.1);
+    }
+
+    .logo-mark img { width: 100%; height: 100%; object-fit: cover; }
+
+    .header-cta {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 0.62rem 1.1rem;
+      border-radius: 999px;
+      background: var(--ink);
+      color: var(--bg);
+      font-size: 0.88rem;
+      font-weight: 700;
+      letter-spacing: -0.01em;
+      transition: opacity 160ms;
+    }
+
+    .header-cta:hover { opacity: 0.88; }
+
+    .header-cta svg { width: 14px; height: 14px; flex-shrink: 0; }
+
+    /* ── HERO ────────────────────────────────── */
+
+    .hero {
+      position: relative;
+      min-height: 100svh;
+      display: flex;
+      align-items: center;
+      overflow: hidden;
+    }
+
+    /* ambient glow blobs */
+    .hero-blob {
+      position: absolute;
+      border-radius: 50%;
+      filter: blur(90px);
+      pointer-events: none;
+    }
+
+    .hero-blob-1 {
+      width: 680px; height: 680px;
+      background: radial-gradient(circle, rgba(120,80,200,0.28), transparent 70%);
+      top: -14%; right: -8%;
+    }
+
+    .hero-blob-2 {
+      width: 520px; height: 520px;
+      background: radial-gradient(circle, rgba(30,160,180,0.18), transparent 70%);
+      bottom: 0%; left: -6%;
+    }
+
+    .hero-blob-3 {
+      width: 360px; height: 360px;
+      background: radial-gradient(circle, rgba(220,100,60,0.14), transparent 70%);
+      top: 38%; left: 28%;
+    }
+
+    .hero-inner {
+      position: relative;
+      z-index: 1;
+      width: min(var(--max-w), calc(100% - var(--page-pad) * 2));
+      margin: 0 auto;
+      padding: calc(var(--header-h) + 60px) 0 80px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      gap: 0;
+    }
+
+    .hero-eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 9px;
+      padding: 0.48rem 0.9rem;
+      border-radius: 999px;
+      border: 1px solid rgba(255,255,255,0.1);
+      background: rgba(255,255,255,0.05);
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: var(--muted);
+      letter-spacing: 0.01em;
+      margin-bottom: 28px;
+      opacity: 0;
+      animation: rise 800ms cubic-bezier(0.22,1,0.36,1) 100ms forwards;
+    }
+
+    .eyebrow-pulse {
+      width: 7px; height: 7px;
+      border-radius: 50%;
+      background: #a78bfa;
+      box-shadow: 0 0 0 4px rgba(167,139,250,0.18);
+      flex-shrink: 0;
+      animation: pulse 2.4s ease-in-out infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { box-shadow: 0 0 0 4px rgba(167,139,250,0.18); }
+      50%       { box-shadow: 0 0 0 8px rgba(167,139,250,0.08); }
+    }
+
+    .hero-title {
+      font-size: clamp(3.6rem, 9.5vw, 8.4rem);
+      font-weight: 700;
+      line-height: 0.92;
+      letter-spacing: -0.065em;
+      max-width: 13ch;
+      text-wrap: balance;
+      opacity: 0;
+      animation: rise 900ms cubic-bezier(0.22,1,0.36,1) 180ms forwards;
+    }
+
+    .hero-title em {
+      font-style: normal;
+      color: rgba(255,255,255,0.28);
+    }
+
+    .hero-sub {
+      margin-top: 26px;
+      max-width: 34rem;
+      font-size: clamp(1rem, 1.6vw, 1.16rem);
+      line-height: 1.7;
+      color: var(--muted);
+      text-wrap: balance;
+      opacity: 0;
+      animation: rise 900ms cubic-bezier(0.22,1,0.36,1) 280ms forwards;
+    }
+
+    .hero-actions {
+      margin-top: 32px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      align-items: center;
+      justify-content: center;
+      opacity: 0;
+      animation: rise 900ms cubic-bezier(0.22,1,0.36,1) 360ms forwards;
+    }
+
+    .btn-primary {
+      display: inline-flex;
+      align-items: center;
+      gap: 9px;
+      padding: 0.9rem 1.6rem;
+      border-radius: 999px;
+      background: #ffffff;
+      color: #0a0b0f;
+      font-size: 0.96rem;
+      font-weight: 700;
+      letter-spacing: -0.01em;
+      box-shadow: 0 0 0 1px rgba(255,255,255,0.12), 0 20px 48px rgba(0,0,0,0.4);
+      transition: transform 160ms ease, box-shadow 160ms ease;
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 0 0 1px rgba(255,255,255,0.2), 0 28px 56px rgba(0,0,0,0.5);
+    }
+
+    .btn-primary svg { width: 16px; height: 16px; flex-shrink: 0; }
+
+    .btn-ghost {
+      display: inline-flex;
+      align-items: center;
+      gap: 9px;
+      padding: 0.9rem 1.4rem;
+      border-radius: 999px;
+      border: 1px solid var(--line);
+      background: var(--surface);
+      color: rgba(255,255,255,0.7);
+      font-size: 0.94rem;
+      font-weight: 600;
+      transition: border-color 160ms, color 160ms;
+    }
+
+    .btn-ghost:hover { border-color: rgba(255,255,255,0.18); color: #fff; }
+
+    .hero-pills {
+      margin-top: 36px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      justify-content: center;
+      opacity: 0;
+      animation: rise 900ms cubic-bezier(0.22,1,0.36,1) 460ms forwards;
+    }
+
+    .hero-pill {
+      padding: 0.38rem 0.9rem;
+      border-radius: 999px;
+      border: 1px solid var(--line);
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: var(--muted2);
+      letter-spacing: 0.01em;
+    }
+
+    /* animated waveform below hero title */
+    .hero-wave {
+      margin-top: 60px;
+      width: 100%;
+      max-width: 640px;
+      height: 72px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 5px;
+      opacity: 0;
+      animation: rise 900ms cubic-bezier(0.22,1,0.36,1) 540ms forwards;
+    }
+
+    .wave-bar {
+      width: 3px;
+      border-radius: 999px;
+      background: rgba(255,255,255,0.22);
+      animation: wave-bounce var(--dur, 1.2s) ease-in-out infinite;
+      animation-delay: var(--delay, 0s);
+    }
+
+    @keyframes wave-bounce {
+      0%, 100% { height: var(--min-h, 8px);  opacity: 0.18; }
+      50%       { height: var(--max-h, 40px); opacity: 0.55; }
+    }
+
+    @keyframes rise {
+      from { opacity: 0; transform: translateY(22px); }
+      to   { opacity: 1; transform: translateY(0);    }
+    }
+
+    /* ── SECTION BASE ────────────────────────── */
+
+    .section {
+      padding: clamp(80px, 12vw, 130px) 0;
+    }
+
+    .section-inner {
+      width: min(var(--max-w), calc(100% - var(--page-pad) * 2));
+      margin: 0 auto;
+    }
+
+    .section-label {
+      font-size: 0.75rem;
+      font-weight: 700;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--muted2);
+      margin-bottom: 18px;
+    }
+
+    .section-title {
+      font-size: clamp(2.4rem, 5vw, 4.2rem);
+      font-weight: 700;
+      line-height: 0.96;
+      letter-spacing: -0.055em;
+      text-wrap: balance;
+      max-width: 14ch;
+    }
+
+    .section-body {
+      margin-top: 18px;
+      max-width: 38rem;
+      font-size: clamp(0.98rem, 1.4vw, 1.1rem);
+      line-height: 1.72;
+      color: var(--muted);
+    }
+
+    [data-reveal] {
+      opacity: 0;
+      transform: translateY(20px);
+      transition: opacity 700ms cubic-bezier(0.22,1,0.36,1), transform 700ms cubic-bezier(0.22,1,0.36,1);
+    }
+
+    [data-reveal].visible { opacity: 1; transform: none; }
+    [data-reveal].d1 { transition-delay: 80ms;  }
+    [data-reveal].d2 { transition-delay: 160ms; }
+    [data-reveal].d3 { transition-delay: 240ms; }
+    [data-reveal].d4 { transition-delay: 320ms; }
+
+    /* ── FEATURES ────────────────────────────── */
+
+    .features-head {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: clamp(24px, 5vw, 80px);
+      align-items: end;
+      margin-bottom: 60px;
+    }
+
+    .features-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 2px;
+      border: 1px solid var(--line);
+      border-radius: 28px;
+      overflow: hidden;
+    }
+
+    .feature-card {
+      padding: clamp(24px, 3vw, 36px);
+      background: rgba(255,255,255,0.02);
+      transition: background 200ms;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .feature-card:hover { background: rgba(255,255,255,0.04); }
+
+    /* dividers between cards */
+    .feature-card + .feature-card { border-left: 1px solid var(--line); }
+    .feature-card.row-start { border-left: none; }
+
+    .feature-icon {
+      width: 44px;
+      height: 44px;
+      border-radius: 14px;
+      border: 1px solid var(--line);
+      background: rgba(255,255,255,0.04);
+      display: grid;
+      place-items: center;
+      flex-shrink: 0;
+    }
+
+    .feature-icon svg { width: 20px; height: 20px; color: rgba(255,255,255,0.7); }
+
+    .feature-name {
+      font-size: 1.08rem;
+      font-weight: 700;
+      letter-spacing: -0.03em;
+      line-height: 1.2;
+    }
+
+    .feature-desc {
+      font-size: 0.94rem;
+      line-height: 1.65;
+      color: var(--muted);
+      flex: 1;
+    }
+
+    /* second row spans the grid differently */
+    .features-grid-b {
+      display: grid;
+      grid-template-columns: 1fr 2fr;
+      gap: 2px;
+      margin-top: 2px;
+      border: 1px solid var(--line);
+      border-top: none;
+      border-radius: 0 0 28px 28px;
+      overflow: hidden;
+    }
+
+    /* ── PHILOSOPHY ──────────────────────────── */
+
+    .philo {
+      position: relative;
+      overflow: hidden;
+    }
+
+    .philo-blob {
+      position: absolute;
+      width: 700px; height: 700px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(100,60,180,0.22), transparent 65%);
+      filter: blur(80px);
+      top: -20%; right: -15%;
+      pointer-events: none;
+    }
+
+    .philo-inner {
+      position: relative;
+      z-index: 1;
+      width: min(var(--max-w), calc(100% - var(--page-pad) * 2));
+      margin: 0 auto;
+    }
+
+    .philo-quote {
+      font-size: clamp(1.8rem, 4vw, 3.4rem);
+      font-weight: 700;
+      letter-spacing: -0.05em;
+      line-height: 1.12;
+      max-width: 22ch;
+      text-wrap: balance;
+    }
+
+    .philo-quote em {
+      font-style: normal;
+      color: rgba(255,255,255,0.3);
+    }
+
+    .philo-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 1px;
+      margin-top: 60px;
+      border: 1px solid var(--line);
+      border-radius: 24px;
+      overflow: hidden;
+    }
+
+    .philo-item {
+      padding: clamp(22px, 3vw, 36px);
+      background: rgba(255,255,255,0.02);
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .philo-item + .philo-item:nth-child(odd)  { border-top: 1px solid var(--line); }
+    .philo-item + .philo-item:nth-child(even) { border-left: 1px solid var(--line); }
+    .philo-item:nth-child(3) { border-top: 1px solid var(--line); }
+    .philo-item:nth-child(4) { border-top: 1px solid var(--line); border-left: 1px solid var(--line); }
+
+    .philo-num {
+      font-size: 0.75rem;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--muted2);
+    }
+
+    .philo-item h3 {
+      font-size: clamp(1.2rem, 1.8vw, 1.6rem);
+      font-weight: 700;
+      letter-spacing: -0.04em;
+      line-height: 1.1;
+    }
+
+    .philo-item p {
+      font-size: 0.95rem;
+      line-height: 1.68;
+      color: var(--muted);
+    }
+
+    /* ── CAPABILITIES ────────────────────────── */
+
+    .caps-list {
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+      border: 1px solid var(--line);
+      border-radius: 24px;
+      overflow: hidden;
+      margin-top: 48px;
+    }
+
+    .cap-row {
+      display: grid;
+      grid-template-columns: 2.4rem minmax(0, 1fr) minmax(0, 2fr);
+      gap: 20px 32px;
+      align-items: start;
+      padding: clamp(20px, 3vw, 32px);
+      border-bottom: 1px solid var(--line);
+      transition: background 180ms;
+    }
+
+    .cap-row:last-child { border-bottom: none; }
+    .cap-row:hover { background: rgba(255,255,255,0.025); }
+
+    .cap-num {
+      font-size: 0.78rem;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      color: var(--muted2);
+      padding-top: 0.25rem;
+    }
+
+    .cap-name {
+      font-size: clamp(1rem, 1.4vw, 1.25rem);
+      font-weight: 700;
+      letter-spacing: -0.03em;
+      line-height: 1.2;
+    }
+
+    .cap-desc {
+      font-size: 0.95rem;
+      line-height: 1.68;
+      color: var(--muted);
+    }
+
+    /* ── CTA ─────────────────────────────────── */
+
+    .cta {
+      padding-bottom: clamp(80px, 12vw, 130px);
+    }
+
+    .cta-inner {
+      width: min(var(--max-w), calc(100% - var(--page-pad) * 2));
+      margin: 0 auto;
+    }
+
+    .cta-card {
+      position: relative;
+      overflow: hidden;
+      border-radius: 32px;
+      border: 1px solid rgba(255,255,255,0.1);
+      padding: clamp(40px, 6vw, 72px);
+      background: linear-gradient(135deg, #12141c 0%, #0e0f17 60%, #160f1a 100%);
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 32px;
+      align-items: center;
+    }
+
+    .cta-blob-1 {
+      position: absolute;
+      width: 500px; height: 500px;
+      background: radial-gradient(circle, rgba(140,80,220,0.22), transparent 65%);
+      filter: blur(70px);
+      top: -30%; right: -10%;
+      border-radius: 50%;
+      pointer-events: none;
+    }
+
+    .cta-blob-2 {
+      position: absolute;
+      width: 300px; height: 300px;
+      background: radial-gradient(circle, rgba(30,160,180,0.15), transparent 65%);
+      filter: blur(60px);
+      bottom: -20%; left: 10%;
+      border-radius: 50%;
+      pointer-events: none;
+    }
+
+    .cta-text { position: relative; z-index: 1; }
+
+    .cta-label {
+      font-size: 0.75rem;
+      font-weight: 700;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.38);
+      margin-bottom: 16px;
+    }
+
+    .cta-title {
+      font-size: clamp(2rem, 4vw, 3.4rem);
+      font-weight: 700;
+      letter-spacing: -0.055em;
+      line-height: 0.97;
+      max-width: 14ch;
+      text-wrap: balance;
+    }
+
+    .cta-sub {
+      margin-top: 16px;
+      max-width: 36rem;
+      font-size: 1rem;
+      line-height: 1.68;
+      color: rgba(255,255,255,0.5);
+    }
+
+    .cta-actions {
+      margin-top: 32px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      align-items: center;
+    }
+
+    .cta-meta {
+      margin-top: 18px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.6rem 1.2rem;
+      font-size: 0.84rem;
+      color: rgba(255,255,255,0.32);
+    }
+
+    .cta-aside {
+      position: relative;
+      z-index: 1;
+      flex-shrink: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    /* audio wave illustration in CTA */
+    .cta-wave {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      height: 80px;
+    }
+
+    .cta-bar {
+      width: 4px;
+      border-radius: 999px;
+      background: rgba(255,255,255,0.18);
+      animation: wave-bounce var(--dur, 1.4s) ease-in-out infinite;
+      animation-delay: var(--delay, 0s);
+    }
+
+    /* ── FOOTER ──────────────────────────────── */
+
+    .footer {
+      border-top: 1px solid var(--line);
+      padding: 28px 0 36px;
+    }
+
+    .footer-inner {
+      width: min(var(--max-w), calc(100% - var(--page-pad) * 2));
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 24px;
+      flex-wrap: wrap;
+    }
+
+    .footer-links {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 8px 20px;
+      font-size: 0.86rem;
+      color: var(--muted2);
+    }
+
+    .footer-links a { transition: color 160ms; }
+    .footer-links a:hover { color: rgba(255,255,255,0.7); }
+
+    .footer-copy {
+      font-size: 0.84rem;
+      color: var(--muted2);
+    }
+
+    /* ── RESPONSIVE ──────────────────────────── */
+
+    @media (max-width: 900px) {
+      .features-head { grid-template-columns: 1fr; gap: 16px; }
+      .features-grid { grid-template-columns: 1fr 1fr; }
+      .feature-card:nth-child(3) { display: none; } /* hide 3rd on tablet if needed */
+      .features-grid-b { grid-template-columns: 1fr; border-radius: 0 0 24px 24px; }
+      .philo-grid { grid-template-columns: 1fr; }
+      .philo-item + .philo-item { border-left: none !important; border-top: 1px solid var(--line) !important; }
+      .cap-row { grid-template-columns: 2rem 1fr; }
+      .cap-desc { display: none; }
+      .cta-card { grid-template-columns: 1fr; }
+      .cta-aside { display: none; }
+    }
+
+    @media (max-width: 640px) {
+      :root { --header-h: 64px; }
+      .features-grid { grid-template-columns: 1fr; }
+      .feature-card + .feature-card { border-left: none; border-top: 1px solid var(--line); }
+      .cap-row { grid-template-columns: 1fr; gap: 8px; }
+      .cap-num { display: none; }
+      .footer-inner { flex-direction: column; align-items: flex-start; gap: 16px; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { animation: none !important; transition-duration: 0.01ms !important; }
+      [data-reveal] { opacity: 1 !important; transform: none !important; }
+      .hero-eyebrow, .hero-title, .hero-sub, .hero-actions, .hero-pills, .hero-wave { opacity: 1 !important; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- HEADER -->
+  <header class="header" id="site-header">
+    <div class="header-inner">
+      <a class="logo" href="/" aria-label="Atheer">
+        <span class="logo-mark"><img src="images/icon.png" alt="" /></span>
+        <span>Atheer</span>
+      </a>
+      <a class="header-cta" href="https://apps.apple.com/app/atheer/id6450851063" target="_blank" rel="noreferrer">
+        <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.8-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z"/></svg>
+        Download
+      </a>
+    </div>
+  </header>
+
+  <!-- HERO -->
+  <section class="hero" id="top">
+    <div class="hero-blob hero-blob-1" aria-hidden="true"></div>
+    <div class="hero-blob hero-blob-2" aria-hidden="true"></div>
+    <div class="hero-blob hero-blob-3" aria-hidden="true"></div>
+
+    <div class="hero-inner">
+      <div class="hero-eyebrow">
+        <span class="eyebrow-pulse" aria-hidden="true"></span>
+        iPhone-native podcast listening
+      </div>
+
+      <h1 class="hero-title">
+        Deeper<br><em>listening.</em>
+      </h1>
+
+      <p class="hero-sub">
+        Transcripts that follow the playhead, clips you can actually share, discovery across four languages, and a library that stays local and fast.
+      </p>
+
+      <div class="hero-actions">
+        <a class="btn-primary" href="https://apps.apple.com/app/atheer/id6450851063" target="_blank" rel="noreferrer">
+          <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.8-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z"/></svg>
+          Download on the App Store
+        </a>
+        <a class="btn-ghost" href="https://x.com/saadbuild" target="_blank" rel="noreferrer">Follow updates</a>
+      </div>
+
+      <div class="hero-pills" aria-label="Key attributes">
+        <span class="hero-pill">No sign-in required</span>
+        <span class="hero-pill">Local-first library</span>
+        <span class="hero-pill">Live transcripts</span>
+        <span class="hero-pill">Clip export</span>
+      </div>
+
+      <!-- animated waveform -->
+      <div class="hero-wave" aria-hidden="true" id="hero-wave"></div>
+    </div>
+  </section>
+
+  <!-- FEATURES -->
+  <section class="section" id="features">
+    <div class="section-inner">
+      <div class="features-head">
+        <div>
+          <p class="section-label" data-reveal>What it does</p>
+          <h2 class="section-title" data-reveal>Built around the episode, not around the app.</h2>
+        </div>
+        <p class="section-body" data-reveal d2>
+          Every screen is designed to keep you inside the listening experience. No feed anxiety, no badge pressure — just the podcast, when you want it.
+        </p>
+      </div>
+
+      <div class="features-grid" data-reveal>
+        <div class="feature-card row-start">
+          <div class="feature-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+          </div>
+          <div>
+            <h3 class="feature-name">Live transcripts</h3>
+            <p class="feature-desc">Words scroll with the playhead. Tap any line to jump there, bookmark moments, or search the full episode without stopping.</p>
+          </div>
+        </div>
+
+        <div class="feature-card">
+          <div class="feature-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polygon points="10 8 16 12 10 16 10 8"/></svg>
+          </div>
+          <div>
+            <h3 class="feature-name">Clip export</h3>
+            <p class="feature-desc">Pull a 15–60 second segment, frame it with optional captions, and share it directly from the player. No editing app required.</p>
+          </div>
+        </div>
+
+        <div class="feature-card">
+          <div class="feature-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+          </div>
+          <div>
+            <h3 class="feature-name">Multilingual discovery</h3>
+            <p class="feature-desc">Switch between English, Arabic, Spanish, and French with one tap. Trending charts and new shows update per language.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="features-grid-b" data-reveal d1>
+        <div class="feature-card row-start">
+          <div class="feature-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+          </div>
+          <div>
+            <h3 class="feature-name">Local-first library</h3>
+            <p class="feature-desc">Your subscriptions, queue, and progress live on-device. No account required for core use — open the app and press play.</p>
+          </div>
+        </div>
+
+        <div class="feature-card">
+          <div class="feature-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+          </div>
+          <div>
+            <h3 class="feature-name">AI chapters</h3>
+            <p class="feature-desc">Episodes without embedded chapters get them generated automatically from the transcript — so every long-form show is navigable.</p>
+          </div>
+          <div>
+            <h3 class="feature-name" style="margin-top:12px">Ambient player</h3>
+            <p class="feature-desc">The full-screen player samples the artwork's dominant color to build an immersive backdrop that changes with every episode.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- PHILOSOPHY -->
+  <section class="section philo" id="philosophy">
+    <div class="philo-blob" aria-hidden="true"></div>
+    <div class="philo-inner">
+      <p class="section-label" data-reveal>The thinking behind it</p>
+      <p class="philo-quote" data-reveal d1>
+        Podcast apps got complicated.<em> Atheer didn't.</em>
+      </p>
+
+      <div class="philo-grid">
+        <div class="philo-item" data-reveal>
+          <span class="philo-num">01</span>
+          <h3>One calm layout</h3>
+          <p>Rounded typography, monochrome surfaces, and artwork that drives the color. No dashboard, no noise.</p>
+        </div>
+        <div class="philo-item" data-reveal d1>
+          <span class="philo-num">02</span>
+          <h3>Continuous flow</h3>
+          <p>Artwork, metadata, transcript, and clip creation feel like adjacent states — not separate screens bolted together.</p>
+        </div>
+        <div class="philo-item" data-reveal d2>
+          <span class="philo-num">03</span>
+          <h3>Immediate access</h3>
+          <p>No onboarding gates for listening. Open the app, find a show, press play. Sign-in is optional.</p>
+        </div>
+        <div class="philo-item" data-reveal d3>
+          <span class="philo-num">04</span>
+          <h3>Speed that respects you</h3>
+          <p>Artwork loads fast, playback is gapless, downloads work in the background. The app moves at your pace.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CAPABILITIES LIST -->
+  <section class="section" id="capabilities">
+    <div class="section-inner">
+      <p class="section-label" data-reveal>Full capability list</p>
+      <h2 class="section-title" data-reveal>Everything in the box.</h2>
+
+      <div class="caps-list">
+        <div class="cap-row" data-reveal>
+          <span class="cap-num">01</span>
+          <span class="cap-name">Transcript view</span>
+          <span class="cap-desc">Word-level karaoke scrolling, tap-to-seek, per-line bookmarking, full-text search, and AI-generated transcripts for any episode.</span>
+        </div>
+        <div class="cap-row" data-reveal d1>
+          <span class="cap-num">02</span>
+          <span class="cap-name">Clip creator</span>
+          <span class="cap-desc">Range slider for 15–60 second clips, optional caption overlay from the transcript, direct share sheet export.</span>
+        </div>
+        <div class="cap-row" data-reveal d2>
+          <span class="cap-num">03</span>
+          <span class="cap-name">Chapters</span>
+          <span class="cap-desc">Embedded ID3 chapters shown instantly, AI-generated fallback for episodes without them, live progress bar per chapter.</span>
+        </div>
+        <div class="cap-row" data-reveal>
+          <span class="cap-num">04</span>
+          <span class="cap-name">Discovery</span>
+          <span class="cap-desc">Trending charts and new shows in English, Arabic, Spanish, and French — switchable with one tap, no settings deep-dive.</span>
+        </div>
+        <div class="cap-row" data-reveal d1>
+          <span class="cap-num">05</span>
+          <span class="cap-name">Library</span>
+          <span class="cap-desc">Subscriptions, favorites, highlights, playlists, history, and downloaded episodes — organized locally, no account required.</span>
+        </div>
+        <div class="cap-row" data-reveal d2>
+          <span class="cap-num">06</span>
+          <span class="cap-name">Home</span>
+          <span class="cap-desc">A focused landing that surfaces the next episode to continue and what is new from subscriptions, without a noisy recommendation feed.</span>
+        </div>
+        <div class="cap-row" data-reveal>
+          <span class="cap-num">07</span>
+          <span class="cap-name">Player</span>
+          <span class="cap-desc">Ambient color backdrop from artwork, sleep timer, variable speed, queue management, and a morphing full-screen experience.</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA -->
+  <section class="cta">
+    <div class="cta-inner">
+      <div class="cta-card" data-reveal>
+        <div class="cta-blob-1" aria-hidden="true"></div>
+        <div class="cta-blob-2" aria-hidden="true"></div>
+
+        <div class="cta-text">
+          <p class="cta-label">Available on iPhone</p>
+          <h2 class="cta-title">Start listening differently.</h2>
+          <p class="cta-sub">Free to download. Pro unlocks transcripts, AI chapters, and clip export.</p>
+
+          <div class="cta-actions">
+            <a class="btn-primary" href="https://apps.apple.com/app/atheer/id6450851063" target="_blank" rel="noreferrer">
+              <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.8-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z"/></svg>
+              Get Atheer on the App Store
+            </a>
+          </div>
+
+          <div class="cta-meta">
+            <span>Requires iOS 26+</span>
+            <span>Free with optional Pro</span>
+            <span>No ads, ever</span>
+          </div>
+        </div>
+
+        <div class="cta-aside" aria-hidden="true">
+          <div class="cta-wave" id="cta-wave"></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer class="footer">
+    <div class="footer-inner">
+      <a class="logo" href="/" aria-label="Atheer">
+        <span class="logo-mark"><img src="images/icon.png" alt="" /></span>
+        <span style="font-size:0.9rem;font-weight:700;color:rgba(255,255,255,0.5)">Atheer</span>
+      </a>
+      <nav class="footer-links" aria-label="Footer">
+        <a href="support/">Support</a>
+        <a href="privacy/">Privacy</a>
+        <a href="terms/">Terms</a>
+        <a href="https://x.com/saadbuild" target="_blank" rel="noreferrer">X / @saadbuild</a>
+      </nav>
+      <p class="footer-copy">Designed for listening, not noise.</p>
+    </div>
+  </footer>
+
+  <script>
+    // Header scroll state
+    const header = document.getElementById("site-header");
+    const onScroll = () => header.classList.toggle("scrolled", window.scrollY > 12);
+    window.addEventListener("scroll", onScroll, { passive: true });
+    onScroll();
+
+    // Scroll reveal
+    const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    if (!reduceMotion) {
+      const io = new IntersectionObserver((entries) => {
+        for (const e of entries) {
+          if (e.isIntersecting) { e.target.classList.add("visible"); io.unobserve(e.target); }
+        }
+      }, { threshold: 0.14, rootMargin: "0px 0px -8% 0px" });
+      document.querySelectorAll("[data-reveal]").forEach(n => io.observe(n));
+    } else {
+      document.querySelectorAll("[data-reveal]").forEach(n => n.classList.add("visible"));
+    }
+
+    // Build animated waveforms
+    function buildWave(containerId, count, minH, maxH, spread) {
+      const container = document.getElementById(containerId);
+      if (!container) return;
+      for (let i = 0; i < count; i++) {
+        const bar = document.createElement("span");
+        bar.className = containerId === "cta-wave" ? "cta-bar" : "wave-bar";
+        const t = i / (count - 1);
+        // bell curve: tallest in middle
+        const bell = 1 - Math.pow((t - 0.5) * 2, 2);
+        const h = minH + bell * (maxH - minH);
+        const minHb = minH * 0.4;
+        bar.style.cssText = `--min-h:${minHb.toFixed(1)}px;--max-h:${h.toFixed(1)}px;--dur:${(0.9 + Math.random() * 0.8).toFixed(2)}s;--delay:${(Math.random() * 0.9).toFixed(2)}s`;
+        container.appendChild(bar);
+      }
+    }
+
+    buildWave("hero-wave", 56, 6, 52, true);
+    buildWave("cta-wave", 32, 8, 64, false);
+  </script>
+</body>
+</html>

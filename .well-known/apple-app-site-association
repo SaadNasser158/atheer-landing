@@ -1,0 +1,13 @@
+{
+  "applinks": {
+    "details": [
+      {
+        "appIDs": ["T6JSP75FFL.sa.saad.Blip"],
+        "components": [
+          { "/": "/podcast*", "comment": "Podcast share links" },
+          { "/": "/episode*", "comment": "Episode share links (future)" }
+        ]
+      }
+    ]
+  }
+}

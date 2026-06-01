@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Atheer Terms of Use." />
+  <meta name="theme-color" content="#11131a" />
+  <link rel="icon" type="image/png" href="../images/icon.png" />
+  <link rel="icon" type="image/png" href="../images/icon.png" media="(prefers-color-scheme: light)" />
+  <link rel="icon" type="image/png" href="../images/icon.png" media="(prefers-color-scheme: dark)" />
+  <link rel="apple-touch-icon" href="../images/icon.png" />
+  <title>Terms of Use — Atheer</title>
+  <style>
+    :root {
+      --bg: #ececef;
+      --bg-soft: #f7f7f8;
+      --surface: rgba(255,255,255,0.7);
+      --surface-strong: rgba(255,255,255,0.92);
+      --ink: #11131a;
+      --muted: #667085;
+      --muted-strong: #445064;
+      --line: rgba(17,19,26,0.09);
+      --line-strong: rgba(17,19,26,0.16);
+      --warm: #7b6053;
+      --warm-soft: #b68d77;
+      --shadow-soft: 0 24px 60px rgba(17,19,26,0.08);
+      --radius-xl: 36px;
+      --radius-lg: 28px;
+      --radius-md: 20px;
+      --content: 720px;
+      --page-pad: clamp(20px,4vw,56px);
+      --header-h: 80px;
+      --ui-font: "SF Pro Rounded","SF Pro Display","SF Pro Text",ui-rounded,-apple-system,BlinkMacSystemFont,"Helvetica Neue",sans-serif;
+    }
+
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+
+    body {
+      margin: 0;
+      min-width: 320px;
+      background:
+        radial-gradient(circle at top left, rgba(182,141,119,0.16), transparent 24rem),
+        linear-gradient(180deg, #f7f7f8 0%, #ececef 28%, #f3f3f4 100%);
+      color: var(--ink);
+      font-family: var(--ui-font);
+      -webkit-font-smoothing: antialiased;
+      text-rendering: optimizeLegibility;
+      overflow-x: hidden;
+    }
+
+    img { display: block; max-width: 100%; }
+    a { color: inherit; text-decoration: none; }
+
+    /* ── HEADER ── */
+    .site-header {
+      position: fixed;
+      inset: 0 0 auto;
+      z-index: 40;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: var(--header-h);
+      pointer-events: none;
+    }
+    .site-header::before {
+      content: "";
+      position: absolute; inset: 0;
+      background: linear-gradient(180deg, rgba(236,236,239,0.92), rgba(236,236,239,0.68) 58%, rgba(236,236,239,0));
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      mask-image: linear-gradient(180deg, black 55%, transparent);
+      -webkit-mask-image: linear-gradient(180deg, black 55%, transparent);
+    }
+    .site-header-inner {
+      width: min(var(--content), calc(100% - (var(--page-pad) * 2)));
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 20px;
+      pointer-events: auto;
+      position: relative;
+      z-index: 1;
+    }
+    .brand-lockup {
+      display: inline-flex;
+      align-items: center;
+      gap: 12px;
+      font-size: 1rem;
+      font-weight: 600;
+      letter-spacing: -0.02em;
+    }
+    .brand-mark {
+      width: 44px; height: 44px;
+      border-radius: 14px;
+      border: 1px solid rgba(17,19,26,0.08);
+      background: rgba(255,255,255,0.92);
+      box-shadow: 0 12px 30px rgba(17,19,26,0.12);
+      flex-shrink: 0;
+      overflow: hidden;
+    }
+    .brand-mark img {
+      width: 100%; height: 100%;
+      object-fit: cover;
+      transform: scale(1.16);
+      transform-origin: center;
+    }
+    .back-link {
+      font-size: 0.88rem;
+      color: var(--muted);
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      opacity: 0.8;
+      transition: opacity 160ms ease;
+    }
+    .back-link:hover { opacity: 1; }
+
+    /* ── CONTENT ── */
+    .page-shell {
+      padding-top: calc(var(--header-h) + 56px);
+      padding-bottom: 80px;
+      padding-left: var(--page-pad);
+      padding-right: var(--page-pad);
+    }
+    .inner {
+      width: min(var(--content), 100%);
+      margin: 0 auto;
+    }
+
+    .page-eyebrow {
+      font-size: 0.75rem;
+      font-weight: 600;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--warm-soft);
+      margin-bottom: 12px;
+    }
+
+    .page-title {
+      font-size: clamp(2rem, 5vw, 3.2rem);
+      font-weight: 700;
+      letter-spacing: -0.04em;
+      line-height: 1.05;
+      margin-bottom: 12px;
+    }
+
+    .page-meta {
+      font-size: 0.85rem;
+      color: var(--muted);
+      margin-bottom: 52px;
+    }
+
+    /* prose */
+    .prose {
+      background: var(--surface-strong);
+      border: 1px solid var(--line-strong);
+      border-radius: var(--radius-md);
+      padding: 36px 36px;
+      box-shadow: var(--shadow-soft);
+    }
+
+    .prose h2 {
+      font-size: 1rem;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      margin: 0 0 10px;
+      padding-top: 28px;
+      border-top: 1px solid var(--line);
+    }
+    .prose h2:first-child { padding-top: 0; border-top: none; }
+
+    .prose p, .prose ul {
+      font-size: 0.9rem;
+      color: var(--muted);
+      line-height: 1.75;
+      margin: 0 0 16px;
+    }
+    .prose ul { padding-left: 1.2em; }
+    .prose li { margin-bottom: 6px; }
+    .prose a {
+      color: var(--ink);
+      text-decoration: underline;
+      text-underline-offset: 3px;
+      text-decoration-color: var(--line-strong);
+    }
+    .prose a:hover { text-decoration-color: var(--ink); }
+    .prose p:last-child, .prose ul:last-child { margin-bottom: 0; }
+
+    /* ── FOOTER ── */
+    .footer {
+      width: min(var(--content), calc(100% - (var(--page-pad) * 2)));
+      margin: 56px auto 0;
+      padding: 0 0 38px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 24px;
+      flex-wrap: wrap;
+      color: rgba(17,19,26,0.48);
+      font-size: 0.9rem;
+    }
+    .footer-links {
+      display: flex;
+      align-items: center;
+      gap: 22px;
+      flex-wrap: wrap;
+    }
+    .footer-links a { transition: color 160ms ease; }
+    .footer-links a:hover { color: var(--ink); }
+  </style>
+</head>
+<body>
+  <header class="site-header">
+    <div class="site-header-inner">
+      <a class="brand-lockup" href="/">
+        <span class="brand-mark" aria-hidden="true">
+          <img src="../images/icon.png" alt="" />
+        </span>
+        <span>Atheer</span>
+      </a>
+      <a class="back-link" href="/">← Back to home</a>
+    </div>
+  </header>
+
+  <div class="page-shell">
+    <div class="inner">
+      <p class="page-eyebrow">Legal</p>
+      <h1 class="page-title">Terms of Use</h1>
+      <p class="page-meta">Effective date: January 1, 2025 &nbsp;·&nbsp; Last updated: March 2025</p>
+
+      <div class="prose">
+        <h2>Acceptance of terms</h2>
+        <p>By downloading or using Atheer ("the app"), you agree to be bound by these Terms of Use. If you do not agree, do not use the app.</p>
+
+        <h2>Use of the app</h2>
+        <p>Atheer is a personal podcast player. You may use it to subscribe to, stream, and manage podcasts for personal, non-commercial purposes. You agree not to:</p>
+        <ul>
+          <li>Use the app for any unlawful purpose</li>
+          <li>Attempt to reverse-engineer, decompile, or tamper with the app</li>
+          <li>Use the app to infringe on any third party's intellectual property rights</li>
+        </ul>
+
+        <h2>Third-party content</h2>
+        <p>Atheer surfaces podcast content from third-party publishers via RSS feeds and the Podcast Index API. We do not own, endorse, or control that content. Podcast audio, artwork, and descriptions are the property of their respective creators.</p>
+
+        <h2>Intellectual property</h2>
+        <p>The Atheer app, name, and all original design elements are owned by the developer. You may not reproduce, distribute, or create derivative works from them without explicit written permission.</p>
+
+        <h2>Disclaimer of warranties</h2>
+        <p>Atheer is provided "as is" and "as available" without warranties of any kind, express or implied. We do not guarantee uninterrupted access or that the app will be free of errors.</p>
+
+        <h2>Limitation of liability</h2>
+        <p>To the fullest extent permitted by law, we shall not be liable for any indirect, incidental, special, consequential, or punitive damages arising from your use of the app.</p>
+
+        <h2>App Store terms</h2>
+        <p>Atheer is distributed via the Apple App Store. Your use is also subject to Apple's <a href="https://www.apple.com/legal/internet-services/itunes/dev/stdeula/" target="_blank" rel="noreferrer">Standard End User License Agreement</a>.</p>
+
+        <h2>Changes to these terms</h2>
+        <p>We may update these terms from time to time. Continued use of the app after changes are posted constitutes acceptance of the revised terms.</p>
+
+        <h2>Governing law</h2>
+        <p>These terms are governed by the laws of the developer's jurisdiction, without regard to conflict of law principles.</p>
+
+        <h2>Contact</h2>
+        <p>Questions about these terms? Reach us at <a href="mailto:Alotaibi.saad158@gmail.com">Alotaibi.saad158@gmail.com</a>.</p>
+      </div>
+    </div>
+  </div>
+
+  <footer class="footer">
+    <div class="brand-lockup">
+      <span class="brand-mark" aria-hidden="true">
+        <img src="../images/icon.png" alt="" />
+      </span>
+      <span>Atheer</span>
+    </div>
+    <div class="footer-links">
+      <a href="/">Home</a>
+      <a href="/support">Support</a>
+      <a href="/privacy">Privacy Policy</a>
+      <a href="/terms">Terms of Use</a>
+    </div>
+    <div>Designed around listening, not noise.</div>
+  </footer>
+</body>
+</html>
