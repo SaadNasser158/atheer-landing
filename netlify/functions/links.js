@@ -42,8 +42,8 @@ exports.handler = async (event) => {
 
   const store = getStore({
     name: "links",
-    siteID: process.env.NETLIFY_SITE_ID ?? process.env.SITE_ID,
-    token: process.env.NETLIFY_BLOB_TOKEN,
+    siteID: process.env.SITE_ID,
+    token: process.env.NETLIFY_FUNCTIONS_TOKEN ?? process.env.NETLIFY_BLOB_TOKEN,
   });
 
   // Extract slug from the end of the path, e.g. /api/links/aB3xFq → "aB3xFq"
