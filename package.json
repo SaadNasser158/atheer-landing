@@ -1,7 +1,4 @@
 {
   "name": "atheer-landing",
-  "private": true,
-  "dependencies": {
-    "@netlify/blobs": "^8.1.0"
-  }
+  "private": true
 }

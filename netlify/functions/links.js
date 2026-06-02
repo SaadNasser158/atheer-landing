@@ -1,14 +1,31 @@
-const { getStore } = require("@netlify/blobs");
 const crypto = require("node:crypto");
 
-const SLUG_CHARS = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
-const SLUG_LEN   = 6;
-const SLUG_RE    = /^[0-9A-Za-z]{6}$/;
+const SLUG_CHARS  = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
+const SLUG_LEN    = 6;
+const SLUG_RE     = /^[0-9A-Za-z]{6}$/;
 const LINKS_TOKEN = process.env.BLIP_LINKS_TOKEN ?? "";
+const KV_URL      = process.env.UPSTASH_REDIS_REST_URL  ?? "";
+const KV_TOKEN    = process.env.UPSTASH_REDIS_REST_TOKEN ?? "";
 
 function generateSlug() {
   const bytes = crypto.randomBytes(SLUG_LEN);
   return Array.from(bytes, b => SLUG_CHARS[b % SLUG_CHARS.length]).join("");
+}
+
+async function kvGet(key) {
+  const r = await fetch(`${KV_URL}/get/${key}`, {
+    headers: { Authorization: `Bearer ${KV_TOKEN}` },
+  });
+  const { result } = await r.json();
+  return result ? JSON.parse(result) : null;
+}
+
+async function kvSet(key, value) {
+  await fetch(`${KV_URL}/set/${key}`, {
+    method: "POST",
+    headers: { Authorization: `Bearer ${KV_TOKEN}`, "Content-Type": "application/json" },
+    body: JSON.stringify(JSON.stringify(value)),
+  });
 }
 
 const CORS = {
@@ -30,21 +47,9 @@ exports.handler = async (event) => {
     return { statusCode: 204, headers: CORS, body: "" };
   }
 
-  // DEBUG — remove after confirming env vars are present
-  if (event.httpMethod === "GET" && event.path.endsWith("/debug")) {
-    return json(200, {
-      NETLIFY_SITE_ID:    process.env.NETLIFY_SITE_ID    ? "SET" : "MISSING",
-      NETLIFY_BLOB_TOKEN: process.env.NETLIFY_BLOB_TOKEN ? "SET" : "MISSING",
-      SITE_ID:            process.env.SITE_ID            ? "SET" : "MISSING",
-      allKeys: Object.keys(process.env).filter(k => k.includes("NETLIFY") || k.includes("SITE") || k.includes("BLOB")),
-    });
+  if (!KV_URL || !KV_TOKEN) {
+    return json(503, { error: "KV store not configured" });
   }
-
-  const store = getStore({
-    name: "links",
-    siteID: process.env.SITE_ID,
-    token: process.env.NETLIFY_FUNCTIONS_TOKEN ?? process.env.NETLIFY_BLOB_TOKEN,
-  });
 
   // Extract slug from the end of the path, e.g. /api/links/aB3xFq → "aB3xFq"
   const slug = (() => {
@@ -56,7 +61,7 @@ exports.handler = async (event) => {
   if (event.httpMethod === "GET") {
     if (!slug) return json(400, { error: "invalid slug" });
 
-    const data = await store.get(slug, { type: "json" }).catch(() => null);
+    const data = await kvGet(slug);
     if (!data) return json(404, { error: "not found" });
 
     return json(200, data, { "Cache-Control": "public, max-age=86400" });
@@ -65,7 +70,7 @@ exports.handler = async (event) => {
   // ── POST /api/links ── auth required ─────────────────────────────────────
   if (event.httpMethod === "POST") {
     if (LINKS_TOKEN) {
-      const auth = (event.headers["authorization"] ?? "");
+      const auth = event.headers["authorization"] ?? "";
       if (auth !== `Bearer ${LINKS_TOKEN}`) return json(401, { error: "unauthorized" });
     }
 
@@ -80,12 +85,11 @@ exports.handler = async (event) => {
       return json(400, { error: "type must be one of: episode, podcast, playlist" });
     }
 
-    // Unique slug — 5 attempts against vanishingly rare collisions
     let newSlug;
     for (let i = 0; i < 5; i++) {
       const candidate = generateSlug();
-      const exists = await store.get(candidate).catch(() => null);
-      if (exists === null) { newSlug = candidate; break; }
+      const exists = await kvGet(candidate);
+      if (!exists) { newSlug = candidate; break; }
     }
     if (!newSlug) return json(500, { error: "slug generation failed" });
 
@@ -111,7 +115,7 @@ exports.handler = async (event) => {
         : null,
     };
 
-    await store.setJSON(newSlug, payload);
+    await kvSet(newSlug, payload);
 
     return json(200, { slug: newSlug, url: `https://atheerapp.org/l/${newSlug}` });
   }
