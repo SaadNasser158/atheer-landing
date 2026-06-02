@@ -141,15 +141,13 @@
   </div>
 
   <script>
-    const BACKEND = "https://atheer-production.up.railway.app";
-
     // Extract slug from /l/<slug>
     const slug = window.location.pathname.replace(/^\/l\//, "").replace(/\/$/, "");
 
     if (!slug || !/^[0-9A-Za-z]{6}$/.test(slug)) {
       document.getElementById("loading").textContent = "Invalid link.";
     } else {
-      fetch(BACKEND + "/v1/links/" + slug)
+      fetch("/api/links/" + slug)
         .then(r => r.ok ? r.json() : Promise.reject(r.status))
         .then(renderMeta)
         .catch(() => {

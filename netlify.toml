@@ -1,0 +1,15 @@
+[functions]
+  directory = "netlify/functions"
+
+# Short link API — routed to the links Netlify Function
+[[redirects]]
+  from   = "/api/links/:slug"
+  to     = "/.netlify/functions/links"
+  status = 200
+  force  = true
+
+[[redirects]]
+  from   = "/api/links"
+  to     = "/.netlify/functions/links"
+  status = 200
+  force  = true
