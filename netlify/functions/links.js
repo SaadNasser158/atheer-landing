@@ -23,8 +23,8 @@ async function kvGet(key) {
 async function kvSet(key, value) {
   await fetch(`${KV_URL}/set/${key}`, {
     method: "POST",
-    headers: { Authorization: `Bearer ${KV_TOKEN}`, "Content-Type": "application/json" },
-    body: JSON.stringify(JSON.stringify(value)),
+    headers: { Authorization: `Bearer ${KV_TOKEN}` },
+    body: JSON.stringify(value),
   });
 }
 
