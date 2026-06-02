@@ -30,7 +30,11 @@ exports.handler = async (event) => {
     return { statusCode: 204, headers: CORS, body: "" };
   }
 
-  const store = getStore("links");
+  const store = getStore({
+    name: "links",
+    siteID: process.env.NETLIFY_SITE_ID,
+    token: process.env.NETLIFY_BLOB_TOKEN,
+  });
 
   // Extract slug from the end of the path, e.g. /api/links/aB3xFq → "aB3xFq"
   const slug = (() => {
