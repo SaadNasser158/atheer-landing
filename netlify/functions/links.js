@@ -30,9 +30,19 @@ exports.handler = async (event) => {
     return { statusCode: 204, headers: CORS, body: "" };
   }
 
+  // DEBUG — remove after confirming env vars are present
+  if (event.httpMethod === "GET" && event.path.endsWith("/debug")) {
+    return json(200, {
+      NETLIFY_SITE_ID:    process.env.NETLIFY_SITE_ID    ? "SET" : "MISSING",
+      NETLIFY_BLOB_TOKEN: process.env.NETLIFY_BLOB_TOKEN ? "SET" : "MISSING",
+      SITE_ID:            process.env.SITE_ID            ? "SET" : "MISSING",
+      allKeys: Object.keys(process.env).filter(k => k.includes("NETLIFY") || k.includes("SITE") || k.includes("BLOB")),
+    });
+  }
+
   const store = getStore({
     name: "links",
-    siteID: process.env.NETLIFY_SITE_ID,
+    siteID: process.env.NETLIFY_SITE_ID ?? process.env.SITE_ID,
     token: process.env.NETLIFY_BLOB_TOKEN,
   });
 
